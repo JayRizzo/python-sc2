@@ -45,20 +45,25 @@ SC2PF=WineLinux python3 examples/protoss/cannon_rush.py
 As promised, worker rush in less than twenty lines:
 
 ```python
-import sc2
-from sc2 import run_game, maps, Race, Difficulty
+from sc2 import maps
+from sc2.bot_ai import BotAI
+from sc2.data import Race, Difficulty
+from sc2.main import run_game
 from sc2.player import Bot, Computer
+import sc2
 
-class WorkerRushBot(sc2.BotAI):
-    async def on_step(self, iteration):
+class WorkerRushBot(BotAI):
+    async def on_step(self, iteration: int):
         if iteration == 0:
             for worker in self.workers:
-                await self.do(worker.attack(self.enemy_start_locations[0]))
+                self.do(worker.attack(self.enemy_start_locations[0]))
 
-run_game(maps.get("Abyssal Reef LE"), [
-    Bot(Race.Zerg, WorkerRushBot()),
-    Computer(Race.Protoss, Difficulty.Medium)
-], realtime=True)
+run_game(maps.get("Abyssal Reef LE"),
+    [Bot(Race.Protoss, WorkerRushBot()),
+     Computer(Race.Zerg, Difficulty.Easy)
+    ],
+    realtime=False
+)
 ```
 
 This is probably the simplest bot that has any realistic chances of winning the game. I have ran it against the medium AI a few times, and once in a while it wins.
